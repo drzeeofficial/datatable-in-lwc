@@ -1,0 +1,63 @@
+__________________________________________________________________________
+  JS FILE OF LWC
+__________________________________________________________________________
+
+import { LightningElement, wire,track} from 'lwc';
+import { refreshApex } from '@salesforce/apex';
+import LeadRecords from'@salesforce/apex/DataFetcher.LeadRecords';               //importing "LeadRecords" function from "DataFetcher" apex class
+
+const columns =[
+    { label: 'Lead Name' , fieldName:'Name'},                                    // Creating Columns
+    { label: 'Lead Status' , fieldName:'Status'},
+    { label: 'LeadID' , fieldName:'Id'}
+];
+
+export default class DataTable extends LightningElement {
+
+ @track columns = columns;                                                    
+ @track data=[];
+ @wire(LeadRecords)
+
+ recordsdata({data, error}){
+
+    if(data)
+    {
+        this.data=data;
+        
+    }
+    if(error)
+    {
+    console.log("No Record found");
+    }
+    return refreshApex(this.recordsdata);
+ }
+}
+
+
+__________________________________________________________________________
+HTML FILE OF LWC 
+__________________________________________________________________________
+
+<template>
+    <lightning-datatable
+    key-field="id"
+    data={data}
+    columns={columns}>
+</lightning-datatable>
+</template>
+
+
+_________________________________________________________________________
+XML FILE OF LWC
+_________________________________________________________________________
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__HomePage</target>        //just exposing the component where we want it to be.
+    </targets>
+</LightningComponentBundle>
+
